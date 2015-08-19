@@ -48,7 +48,7 @@ TYPEDEF struct ifnet {
 struct rte_mempool;
 
 void npf_dpdk_init(struct rte_mempool *);
-npf_t *npf_dpdk_create(int);
+npf_t *npf_dpdk_create(void);
 struct ifnet *npf_dpdk_ifattach(npf_t *, const char *, unsigned);
 void npf_dpdk_ifdetach(npf_t *, struct ifnet *);
 

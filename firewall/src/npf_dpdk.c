@@ -171,7 +171,7 @@ dpdk_mbuf_getchainlen(const struct mbuf *m0)
 	const struct rte_mbuf *m = (const void *)m0;
 	size_t tlen = 0;
 
-    printf("getcqhinlen\n");
+    printf("getchainlen\n");
 	while (m) {
 		tlen += rte_pktmbuf_data_len(m);
 		m = m->next;
@@ -211,8 +211,8 @@ static const npf_ifops_t npf_ifops = {
 };
 
 npf_t *
-npf_dpdk_create(int flags)
+npf_dpdk_create(void)
 {
-	return npf_create(&npf_mbufops, &npf_ifops, flags);
+	return npf_create(&npf_mbufops, &npf_ifops);
 }
 
