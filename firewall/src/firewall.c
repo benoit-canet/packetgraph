@@ -76,6 +76,8 @@ static int firewall_build_pcap_filter(nl_rule_t *rl, const char *filter)
 	size_t len;
 	int ret;
 
+    memset(&bf, sizeof(struct bpf_program), 0);
+
 	/* compile the expression (use DLT_RAW for NPF rules). */
 	ret = pcap_compile_nopcap(maxsnaplen, DLT_RAW, &bf,
 				  filter, 1, PCAP_NETMASK_UNKNOWN);
@@ -85,6 +87,9 @@ static int firewall_build_pcap_filter(nl_rule_t *rl, const char *filter)
 	/* assign the byte-code to this rule. */
 	len = bf.bf_len * sizeof(struct bpf_insn);
 	ret = npf_rule_setcode(rl, NPF_CODE_BPF, bf.bf_insns, len);
+    unsigned int i;
+    for (i = 0; i < len; i++)
+        printf("%u", ((uint8_t *)bf.bf_insns)[i]);
 	g_assert(ret == 0);
 	pcap_freecode(&bf);
 	return 0;
