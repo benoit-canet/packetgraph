@@ -124,6 +124,7 @@ dpdk_ifop_setname(ifnet_t *ifp, void *arg)
 static struct mbuf *
 dpdk_mbuf_alloc(int type, int flags)
 {
+    printf("alloc\n");
 	(void)type; (void)flags;
 	return (void *)rte_pktmbuf_alloc(dpdk_mbuf_mempool);
 }
@@ -133,6 +134,7 @@ dpdk_mbuf_free(struct mbuf *m0)
 {
 	struct rte_mbuf *m = (void *)m0;
 
+    printf("free\n");
 	rte_pktmbuf_free(m);
 }
 
@@ -141,6 +143,7 @@ dpdk_mbuf_getdata(const struct mbuf *m0)
 {
 	const struct rte_mbuf *m = (const void *)m0;
 
+    printf("getdata\n");
 	return rte_pktmbuf_mtod(m, void *);
 }
 
@@ -149,6 +152,7 @@ dpdk_mbuf_getnext(struct mbuf *m0)
 {
 	struct rte_mbuf *m = (void *)m0;
 
+    printf("getnext\n");
 	return (void *)m->next;
 }
 
@@ -157,6 +161,7 @@ dpdk_mbuf_getlen(const struct mbuf *m0)
 {
 	const struct rte_mbuf *m = (const void *)m0;
 
+    printf("getlen\n");
 	return rte_pktmbuf_data_len(m);
 }
 
@@ -166,6 +171,7 @@ dpdk_mbuf_getchainlen(const struct mbuf *m0)
 	const struct rte_mbuf *m = (const void *)m0;
 	size_t tlen = 0;
 
+    printf("getcqhinlen\n");
 	while (m) {
 		tlen += rte_pktmbuf_data_len(m);
 		m = m->next;
@@ -177,6 +183,7 @@ static bool
 dpdk_mbuf_ensure_something(struct mbuf **m, size_t len)
 {
 	(void)m; (void)len;
+    printf("ensure\n");
 	return false;
 }
 

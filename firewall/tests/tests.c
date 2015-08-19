@@ -34,9 +34,11 @@
 #include <packetgraph/utils/mac.h>
 #include <packetgraph/brick.h>
 #include <packetgraph/firewall.h>
+#include <packetgraph/print.h>
 #include <packetgraph/utils/bitmask.h>
 #include <packetgraph/collect.h>
 #include <packetgraph/packetsgen.h>
+#include <packetgraph/packetgraph.h>
 #include <packetgraph/packets.h>
 
 static struct rte_mbuf *build_ip_packet(const char *src_ip,
@@ -139,20 +141,18 @@ static void firewall_filter_rules(enum pg_side dir)
 	/* create and connect 3 bricks: generator -> firewall -> collector */
 	gen = pg_packetsgen_new("gen", 2, 2, pg_flip_side(dir), packets, nb, &error);
 	g_assert(!error);
-	fw = pg_firewall_new("fw", 2, 2, PG_NONE, &error);
+	fw = pg_firewall_new("fw", 2, 2, 1, &error);
 	g_assert(!error);
 	col = pg_collect_new("col", 2, 2, &error);
 	g_assert(!error);
+    struct pg_brick *print = pg_print_new("printer", 1, 1, stdout, PG_PRINT_FLAG_MAX, NULL, &error);
+	g_assert(!error);
 	/* revert link if needed */
 	if (dir == WEST_SIDE) {
-		pg_brick_link(gen, fw, &error);
-		g_assert(!error);
-		pg_brick_link(fw, col, &error);
+        pg_brick_chained_links(&error, gen, print, fw, col);
 		g_assert(!error);
 	} else {
-		pg_brick_link(col, fw, &error);
-		g_assert(!error);
-		pg_brick_link(fw, gen, &error);
+        pg_brick_chained_links(&error, col, fw, print, gen);
 		g_assert(!error);
 	}
 
@@ -194,6 +194,7 @@ static void firewall_filter_rules(enum pg_side dir)
 		filtered_pkts = pg_brick_east_burst_get(col, &filtered_pkts_mask,
 						     &error);
 	g_assert(!error);
+    printf("received: %u\n", pg_mask_count(filtered_pkts_mask));
 	g_assert(pg_mask_count(filtered_pkts_mask) == nb / 3);
 	for (; filtered_pkts_mask;) {
 		pg_low_bit_iterate_full(filtered_pkts_mask, bit, i);

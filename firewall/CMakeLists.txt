@@ -90,6 +90,7 @@ target_include_directories(packetgraph-firewall-tests PUBLIC
 	${GLIB2_INCLUDE_DIR}
 	${GLIB2_INTERNAL_INCLUDE_DIR}
 	${LIBNPF_INCLUDE_DIR}
+    /home/mojo/packetgraph/print
 	${LIBPACKETGRAPH-CORE_INCLUDE_DIR})
 
 target_link_libraries(packetgraph-firewall-tests
@@ -101,6 +102,7 @@ target_link_libraries(packetgraph-firewall-tests
 	pthread
 	dl
 	${GLIB2_LIBRARIES}
+    /home/mojo/packetgraph/tools/build-print/libpacketgraph-print.a
 	${RTE_SDK_ROOT}/build/lib/librte_hash.a
 	${RTE_SDK_ROOT}/build/lib/librte_mbuf.a
 	${RTE_SDK_ROOT}/build/lib/librte_mempool.a
