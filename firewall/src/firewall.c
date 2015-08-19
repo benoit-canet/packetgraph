@@ -79,7 +79,7 @@ static int firewall_build_pcap_filter(nl_rule_t *rl, const char *filter)
 	/* compile the expression (use DLT_RAW for NPF rules). */
 	ret = pcap_compile_nopcap(maxsnaplen, DLT_RAW, &bf,
 				  filter, 1, PCAP_NETMASK_UNKNOWN);
-	if (ret)
+	if (ret != 0)
 		return ret;
 
 	/* assign the byte-code to this rule. */
